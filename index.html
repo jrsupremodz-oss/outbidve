@@ -8,12 +8,12 @@
     <!-- Favicon dinámico SVG integrado -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
 
-    <!-- PWA Meta Tags & Manifest Data URI -->
+    <!-- PWA Meta Tags & Manifest corregido para GitHub Pages -->
     <meta name="theme-color" content="#090d16" id="theme-color-meta">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OutbidVE">
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22OutbidVE%20Venezuela%22%2C%22short_name%22%3A%22OutbidVE%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23090d16%22%2C%22theme_color%22%3A%22%23f59e0b%22%2C%22icons%22%3A%5B%5D%7D">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22OutbidVE%20Venezuela%22%2C%22short_name%22%3A%22OutbidVE%22%2C%22start_url%22%3A%22.%2F%22%2C%22scope%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23090d16%22%2C%22theme_color%22%3A%22%23f59e0b%22%2C%22icons%22%3A%5B%5D%7D">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -189,7 +189,6 @@
             }
         }
 
-        // Cargar tema inicial (por defecto oscuro si no hay preferencia)
         function initTheme() {
             const savedTheme = localStorage.getItem('theme') || 'dark';
             const themeIcon = document.getElementById('theme-icon');
@@ -263,7 +262,6 @@
                 return `
                     <div onclick="visitUrl('${item.url}')" class="p-4 sm:p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] ${isTop ? 'glow-leader py-5 sm:py-6' : 'bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/40 shadow-sm'}">
                         <div class="flex items-center space-x-3 sm:space-x-4 min-w-0 pr-3 flex-1">
-                            <!-- Número de puesto con color dinámico brillante para el #1 tanto en modo claro como oscuro -->
                             <span class="w-6 sm:w-8 text-center font-black ${isTop ? 'text-amber-600 dark:text-amber-400 text-xl sm:text-2xl drop-shadow-sm' : 'text-slate-400 dark:text-slate-500 text-base'}">#${index + 1}</span>
                             
                             <img src="${item.logo}" alt="${item.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700/80 shadow-md flex-shrink-0">
