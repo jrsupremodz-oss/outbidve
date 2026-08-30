@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OutbidVE - Subasta de Enlaces Venezuela</title>
+    
+    <!-- Favicon dinámico SVG integrado -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
+
+    <!-- PWA Meta Tags & Manifest Data URI -->
+    <meta name="theme-color" content="#090d16" id="theme-color-meta">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OutbidVE">
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22OutbidVE%20Venezuela%22%2C%22short_name%22%3A%22OutbidVE%22%2C%22start_url%22%3A%22%2F%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23090d16%22%2C%22theme_color%22%3A%22%23f59e0b%22%2C%22icons%22%3A%5B%5D%7D">
+
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -13,91 +29,116 @@
             box-shadow: 0 0 35px rgba(245, 158, 11, 0.15);
             background: linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(15, 23, 42, 0.95) 100%);
         }
+        html:not(.dark) .glow-leader {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(255, 255, 255, 0.95) 100%);
+            border: 2px solid rgba(217, 119, 6, 0.5);
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 min-h-screen flex flex-col justify-between selection:bg-amber-500 selection:text-slate-950 transition-colors duration-200">
 
     <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+    <header class="border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 transition-colors duration-200">
         <div class="max-w-2xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-2">
-                <span class="text-2xl font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">OutbidVE</span>
-                <span class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span> En Vivo
+                <span class="text-2xl font-black bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">OutbidVE</span>
+                <span class="text-xs bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 px-2.5 py-0.5 rounded-full font-semibold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span> En Vivo
                 </span>
             </div>
-            <button onclick="openBidModal()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-amber-500/20 transition-all transform active:scale-95 text-sm">
-                🚀 Pujar Posición
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- Botón de Modo Claro / Oscuro -->
+                <button onclick="toggleTheme()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Cambiar tema">
+                    <span id="theme-icon" class="text-sm">☀️</span>
+                </button>
+                <!-- Botón de instalación PWA -->
+                <button id="install-btn" style="display:none;" onclick="installPWA()" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-amber-600 dark:text-amber-400 border border-amber-500/30 font-semibold px-3 py-2 rounded-xl text-xs transition-all flex items-center gap-1">
+                    📲 Instalar
+                </button>
+                <button onclick="openBidModal()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-slate-950 font-bold px-4 py-2 rounded-xl shadow-lg shadow-amber-500/20 transition-all transform active:scale-95 text-xs sm:text-sm">
+                    🚀 Pujar
+                </button>
+            </div>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="max-w-2xl mx-auto px-4 py-8 flex-grow w-full space-y-6">
-        <div class="text-center space-y-2">
+        <div class="text-center space-y-3">
+            <!-- Contador Dinámico de Visitas Diarias -->
+            <div class="inline-flex items-center gap-2 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 px-3.5 py-1 rounded-full text-xs text-slate-600 dark:text-slate-400 shadow-sm transition-colors duration-200">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Visitas hoy: <strong id="visitor-counter" class="text-emerald-600 dark:text-emerald-400 font-mono">1,245</strong> personas</span>
+            </div>
+
             <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">
-                Domina la <span class="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">Tabla</span>
+                Domina la <span class="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">Tabla</span>
             </h1>
-            <p class="text-slate-400 text-sm max-w-md mx-auto">
-                Cada nueva puja desplaza al puesto anterior en Bolívares. ¿Quién mantendrá la cima hoy?
+            <p class="text-slate-600 dark:text-slate-400 text-sm max-w-md mx-auto">
+                Las 10 marcas con mayor visibilidad en Venezuela. Cada nueva puja asciende posiciones en tiempo real.
             </p>
         </div>
 
-        <!-- Leaderboard Container -->
+        <!-- Leaderboard Container (10 slots) -->
         <div class="space-y-4">
-            <div class="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-400 px-2">
+            <div class="flex justify-between items-center text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-2">
                 <span>Posición / Marca</span>
                 <span>Puja Actual</span>
             </div>
             <div id="leaderboard-list" class="space-y-3.5">
-                <!-- Javascript injects items here -->
+                <!-- Inyectado por JavaScript -->
             </div>
         </div>
     </main>
 
     <!-- Bid Modal -->
     <div id="bid-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative animate-in fade-in zoom-in duration-200">
-            <button onclick="closeBidModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-200">✕</button>
-            <h2 class="text-xl font-bold mb-1">Realizar una Puja</h2>
-            <p class="text-xs text-slate-400 mb-5">Ingresa tus datos y envía el comprobante a WhatsApp para validar tu puesto.</p>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto transition-colors duration-200">
+            <button onclick="closeBidModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">✕</button>
+            <h2 class="text-xl font-bold mb-1 text-slate-900 dark:text-slate-100">Realizar una Puja</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mb-5">Ingresa los datos de tu empresa, adjunta tu logo y envía el comprobante a WhatsApp.</p>
             
             <form id="bid-form" onsubmit="handleBidSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Nombre de la Marca</label>
-                    <input type="text" id="brand-name" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition-colors" placeholder="Ej. Mi Marca">
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Nombre de la Empresa / Marca</label>
+                    <input type="text" id="brand-name" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Ej. Tu Tienda C.A.">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Enlace Web o Red Social (URL)</label>
-                    <input type="url" id="brand-url" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition-colors" placeholder="https://instagram.com/tu_marca">
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Logo o Imagen de la Empresa</label>
+                    <input type="file" id="brand-logo-file" accept="image/*" class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-600 dark:text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-600 transition-colors">
+                    <p class="text-[10px] text-slate-500 mt-1">Sube la imagen para enviarla junto al comprobante.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Monto de la Puja (Mínimo 100 Bs.)</label>
-                    <input type="number" id="bid-amount" step="10" min="100" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition-colors" placeholder="Ej. 1050">
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Enlace Web o Red Social (URL)</label>
+                    <input type="url" id="brand-url" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors" placeholder="https://instagram.com/tu_marca">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Monto de la Puja (Mínimo 100 Bs.)</label>
+                    <input type="number" id="bid-amount" step="10" min="100" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Ej. 1050">
                 </div>
 
-                <!-- Clean Pago Movil Box -->
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+                <!-- Pago Movil Box -->
+                <div class="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl p-4 space-y-2">
                     <div class="flex justify-between items-center">
-                        <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Datos Pago Móvil</span>
-                        <button type="button" onclick="copyPagoMovil()" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Datos Pago Móvil BNC</span>
+                        <button type="button" onclick="copyPagoMovil()" class="bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-bold px-3 py-1 rounded-lg transition-colors flex items-center gap-1.5">
                             📋 Copiar Datos
                         </button>
                     </div>
-                    <div class="text-xs space-y-1 text-slate-300 font-mono pt-1">
-                        <p>Banco: <span class="text-white font-semibold">BNC</span></p>
-                        <p>Teléfono: <span class="text-white font-semibold">0416-9485195</span></p>
-                        <p>C.I.: <span class="text-white font-semibold">21271099</span></p>
+                    <div class="text-xs space-y-1 text-slate-600 dark:text-slate-300 font-mono pt-1">
+                        <p>Banco: <span class="text-slate-900 dark:text-white font-semibold">BNC (0191)</span></p>
+                        <p>Teléfono: <span class="text-slate-900 dark:text-white font-semibold">0416-9485195</span></p>
+                        <p>C.I.: <span class="text-slate-900 dark:text-white font-semibold">21271099</span></p>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-slate-400 mb-1">Número de Referencia Bancaria</label>
-                    <input type="text" id="payment-ref" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition-colors" placeholder="Últimos dígitos de la referencia">
+                    <label class="block text-xs font-semibold uppercase text-slate-600 dark:text-slate-400 mb-1">Número de Referencia Bancaria</label>
+                    <input type="text" id="payment-ref" required class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-4 py-2.5 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-amber-500 transition-colors" placeholder="Últimos dígitos de la referencia">
                 </div>
 
                 <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/10 text-sm flex items-center justify-center gap-2">
-                    📲 Enviar Referencia por WhatsApp
+                    📲 Enviar Datos y Logo por WhatsApp
                 </button>
             </form>
         </div>
@@ -109,19 +150,74 @@
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500">
+    <footer class="border-t border-slate-200 dark:border-slate-800/80 py-6 text-center text-xs text-slate-500 space-y-1 transition-colors duration-200">
         <p>OutbidVE © 2026. Todos los derechos reservados.</p>
+        <p class="text-slate-400 dark:text-slate-600">Instala esta app en tu celular desde el navegador.</p>
     </footer>
 
     <script>
-        // AQUÍ EDITAS LAS MARCAS, SUS ENLACES, MONTOS Y LOGOS:
+        // LISTA DE LAS 10 MARCAS (EDITABLE MANUALMENTE):
         let leaderboard = [
-            { id: 1, name: "Cashea", url: "https://cashea.app", amount: 1000, logo: "https://media.licdn.com/dms/image/v2/D4D0BAQEWn9nf5D2UBw/company-logo_200_200/company-logo_200_200/0/1664637447675?e=2147483647&v=beta&t=7FTDjI3a0GfZfQt2rTyDlJ62OjS4GVQ7RACFFohMFww" },
-            { id: 2, name: "Glup", url: "https://instagram.com", amount: 750, logo: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=100&auto=format&fit=crop&q=60" },
-            { id: 3, name: "Yummy Rides", url: "https://yummy.collection", amount: 450, logo: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100&auto=format&fit=crop&q=60" },
-            { id: 4, name: "Farmatodo", url: "https://farmatodo.com.ve", amount: 250, logo: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=100&auto=format&fit=crop&q=60" },
-            { id: 5, name: "Espacio Libre", url: "#", amount: 100, logo: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100&auto=format&fit=crop&q=60" }
+            { id: 1, name: "Cashea", url: "https://cashea.app", amount: 1500, logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=60" },
+            { id: 2, name: "Glup", url: "https://instagram.com", amount: 1200, logo: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=100&auto=format&fit=crop&q=60" },
+            { id: 3, name: "Yummy Rides", url: "https://yummy.collection", amount: 950, logo: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100&auto=format&fit=crop&q=60" },
+            { id: 4, name: "Farmatodo", url: "https://farmatodo.com.ve", amount: 800, logo: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=100&auto=format&fit=crop&q=60" },
+            { id: 5, name: "Plaza's", url: "https://elondaplazas.com", amount: 650, logo: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=100&auto=format&fit=crop&q=60" },
+            { id: 6, name: "Locatel", url: "https://locatel.com.ve", amount: 500, logo: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=100&auto=format&fit=crop&q=60" },
+            { id: 7, name: "Benito Tacos", url: "https://instagram.com", amount: 350, logo: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=100&auto=format&fit=crop&q=60" },
+            { id: 8, name: "Aeroenvios", url: "https://aeroenvios.com", amount: 250, logo: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=100&auto=format&fit=crop&q=60" },
+            { id: 9, name: "TecnoStore", url: "https://instagram.com", amount: 180, logo: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=100&auto=format&fit=crop&q=60" },
+            { id: 10, name: "Espacio Disponible", url: "#", amount: 100, logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=60" }
         ];
+
+        // Lógica del selector de tema claro/oscuro (por defecto oscuro)
+        function toggleTheme() {
+            const html = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            const metaThemeColor = document.getElementById('theme-color-meta');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                themeIcon.textContent = '🌙';
+                metaThemeColor.setAttribute('content', '#f8fafc');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                themeIcon.textContent = '☀️';
+                metaThemeColor.setAttribute('content', '#090d16');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Cargar tema inicial (por defecto oscuro si no hay preferencia)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const themeIcon = document.getElementById('theme-icon');
+            const metaThemeColor = document.getElementById('theme-color-meta');
+            
+            if (savedTheme === 'light') {
+                document.documentElement.classList.remove('dark');
+                themeIcon.textContent = '🌙';
+                metaThemeColor.setAttribute('content', '#f8fafc');
+            } else {
+                document.documentElement.classList.add('dark');
+                themeIcon.textContent = '☀️';
+                metaThemeColor.setAttribute('content', '#090d16');
+            }
+        }
+
+        // Lógica del contador dinámico entre 1000 y 1500 visitas
+        let currentVisits = 1245;
+        function initVisitorCounter() {
+            const counterEl = document.getElementById('visitor-counter');
+            setInterval(() => {
+                const change = Math.floor(Math.random() * 5) - 2;
+                currentVisits += change;
+                if (currentVisits < 1000) currentVisits = 1000;
+                if (currentVisits > 1500) currentVisits = 1500;
+                counterEl.textContent = currentVisits.toLocaleString();
+            }, 6000);
+        }
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -129,12 +225,11 @@
             toast.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => {
                 toast.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            }, 3500);
         }
 
         function copyPagoMovil() {
-            const textToCopy = "Banco: BNC\nTeléfono: 04169485195\nC.I: 21271099";
-            
+            const textToCopy = "Banco: BNC (0191)\nTeléfono: 04169485195\nC.I: 21271099";
             const textArea = document.createElement("textarea");
             textArea.value = textToCopy;
             textArea.style.position = "fixed";
@@ -155,7 +250,6 @@
             } catch (err) {
                 showToast("Error al copiar al portapapeles");
             }
-            
             document.body.removeChild(textArea);
         }
 
@@ -167,22 +261,22 @@
                 const isTop = index === 0;
 
                 return `
-                    <div onclick="visitUrl('${item.url}')" class="p-4 sm:p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] ${isTop ? 'glow-leader py-5 sm:py-6' : 'bg-slate-900/40 border border-slate-800/80 hover:bg-slate-800/40'}">
-                        <div class="flex items-center space-x-4 sm:space-x-5 min-w-0 pr-4 flex-1">
-                            <span class="w-6 sm:w-8 text-center font-black ${isTop ? 'text-amber-400 text-xl sm:text-2xl' : 'text-slate-500 text-base'}">#${index + 1}</span>
+                    <div onclick="visitUrl('${item.url}')" class="p-4 sm:p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all hover:scale-[1.01] ${isTop ? 'glow-leader py-5 sm:py-6' : 'bg-white dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 hover:bg-slate-50 dark:hover:bg-slate-800/40 shadow-sm'}">
+                        <div class="flex items-center space-x-3 sm:space-x-4 min-w-0 pr-3 flex-1">
+                            <!-- Número de puesto con color dinámico brillante para el #1 tanto en modo claro como oscuro -->
+                            <span class="w-6 sm:w-8 text-center font-black ${isTop ? 'text-amber-600 dark:text-amber-400 text-xl sm:text-2xl drop-shadow-sm' : 'text-slate-400 dark:text-slate-500 text-base'}">#${index + 1}</span>
                             
-                            <!-- Logo de la marca -->
-                            <img src="${item.logo}" alt="${item.name}" class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl object-cover border border-slate-700/80 shadow-md flex-shrink-0">
+                            <img src="${item.logo}" alt="${item.name}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover border border-slate-200 dark:border-slate-700/80 shadow-md flex-shrink-0">
 
                             <div class="min-w-0 flex-1">
-                                <div class="font-bold text-slate-100 text-base sm:text-lg flex flex-wrap items-center gap-2">
-                                    <span class="break-words ${isTop ? 'text-lg sm:text-xl font-extrabold text-amber-200' : ''}">${item.name}</span>
-                                    ${isTop ? '<span class="text-[10px] bg-amber-500 text-slate-950 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wider shadow">👑 Líder</span>' : ''}
+                                <div class="font-bold text-slate-900 dark:text-slate-100 text-sm sm:text-base flex flex-wrap items-center gap-2">
+                                    <span class="break-words ${isTop ? 'text-base sm:text-lg font-extrabold text-amber-700 dark:text-amber-200' : ''}">${item.name}</span>
+                                    ${isTop ? '<span class="text-[9px] bg-amber-500 text-slate-950 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wider shadow">👑 Líder</span>' : ''}
                                 </div>
-                                <span class="text-xs text-slate-400 font-mono truncate block mt-0.5">${item.url}</span>
+                                <span class="text-[11px] text-slate-500 dark:text-slate-400 font-mono truncate block mt-0.5">${item.url}</span>
                             </div>
                         </div>
-                        <div class="font-black text-emerald-400 text-lg sm:text-xl flex-shrink-0 pl-2">
+                        <div class="font-black text-emerald-600 dark:text-emerald-400 text-base sm:text-lg flex-shrink-0 pl-1">
                             ${item.amount.toLocaleString()} Bs.
                         </div>
                     </div>
@@ -207,8 +301,7 @@
         function handleBidSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('brand-name').value;
-
-            showToast(`¡Puja de ${name} procesada! Redirigiendo a WhatsApp...`);
+            showToast(`¡Puja de ${name} registrada! Abriendo WhatsApp...`);
             closeBidModal();
             document.getElementById('bid-form').reset();
 
@@ -216,11 +309,39 @@
             
             setTimeout(() => {
                 window.open(waUrl, '_blank');
-            }, 1000);
+            }, 1200);
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('install-btn').style.display = 'flex';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('install-btn').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
         }
 
         window.onload = () => {
+            initTheme();
             renderLeaderboard();
+            initVisitorCounter();
+            
+            if ('serviceWorker' in navigator) {
+                const swCode = "self.addEventListener('fetch', function(e) {});";
+                const blob = new Blob([swCode], {type: 'text/javascript'});
+                const swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl).catch(() => {});
+            }
         };
     </script>
 </body>
