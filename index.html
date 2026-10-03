@@ -344,5 +344,60 @@
             }
         };
     </script>
+<!-- BANNER DE DETECCIÓN DE NAVEGADOR DE FACEBOOK -->
+<div id="fb-browser-banner" style="display:none; position:fixed; bottom:0; left:0; width:100%; background:linear-gradient(135deg, #1877f2, #0d5db8); color:#fff; padding:16px; text-align:center; z-index:99999; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-shadow:0 -4px 20px rgba(0,0,0,0.3); box-sizing:border-box;">
+  <div style="max-width:500px; margin:0 auto;">
+    <div style="font-size:16px; font-weight:bold; margin-bottom:6px;">⚠️ Estás usando el navegador de Facebook</div>
+    <p style="font-size:13px; line-height:1.4; margin:0 0 12px 0; opacity:0.95;">
+      Para poder instalar <b>Bodega Express</b> en tu teléfono y usarla sin internet, toca los tres puntos (<b>⋮</b>) arriba a la derecha y selecciona <b>"Abrir en el navegador"</b> o <b>"Abrir en Chrome"</b>.
+    </p>
+    <div style="display:flex; gap:8px; justify-content:center;">
+      <button onclick="copiarEnlaceApp()" style="background:#fff; color:#1877f2; border:none; padding:8px 14px; font-weight:bold; font-size:13px; border-radius:6px; cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+        📋 Copiar Enlace
+      </button>
+      <button onclick="cerrarBannerFB()" style="background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); padding:8px 14px; font-size:13px; border-radius:6px; cursor:pointer;">
+        Entendido
+      </button>
+    </div>
+    <div id="copiado-aviso" style="font-size:11px; margin-top:6px; display:none; color:#e1ffd6;">¡Enlace copiado! Pégalo en Google Chrome.</div>
+  </div>
+</div>
+
+<script>
+  // 1. Detectar si el usuario está en el WebView de Facebook o Instagram
+  function isFacebookApp() {
+    const ua = navigator.userAgent || navigator.vendor || window.opera;
+    return (ua.indexOf("FBAN") > -1) || (ua.indexOf("FBAV") > -1) || (ua.indexOf("Instagram") > -1);
+  }
+
+  // 2. Mostrar el banner al cargar si se cumple la condición
+  document.addEventListener("DOMContentLoaded", function() {
+    if (isFacebookApp()) {
+      const banner = document.getElementById("fb-browser-banner");
+      if (banner) banner.style.display = "block";
+    }
+  });
+
+  // 3. Función para copiar el enlace de la PWA al portapapeles
+  function copiarEnlaceApp() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(function() {
+      const aviso = document.getElementById("copiado-aviso");
+      if (aviso) {
+        aviso.style.display = "block";
+        setTimeout(() => { aviso.style.display = "none"; }, 4000);
+      }
+    }).catch(function(err) {
+      // Fallback por si el portapapeles está bloqueado
+      prompt("Copia este enlace para abrirlo en Chrome:", url);
+    });
+  }
+
+  // 4. Permitir cerrar el banner si el usuario prefiere ignorarlo temporalmente
+  function cerrarBannerFB() {
+    const banner = document.getElementById("fb-browser-banner");
+    if (banner) banner.style.display = "none";
+  }
+</script>
 </body>
 </html>
